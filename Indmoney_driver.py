@@ -1,18 +1,16 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
-from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 import time
 
 from password import PHONE_NUMBER, NO_OF_WATCHLISTS,  PASSWORD, SLEEP_TIME
 import random
 
-get_SLEEP_TIME = lambda :random.randrange(SLEEP_TIME, 20)
-URL = "https://www.indstocks.com"
+get_SLEEP_TIME = lambda :random.randrange(SLEEP_TIME, 10) #To bypass Captcha 
+URL = "https://www.indstocks.com"   
 
-for i in range(0,100):
+for i in range(0,100): 
     try:
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service)
@@ -30,7 +28,7 @@ time.sleep(get_SLEEP_TIME())
 driver.find_element(By.XPATH, '//*[@id="site-header"]/div/div[2]/div/button[1]').click() #Login Button
 
 time.sleep(get_SLEEP_TIME())
-driver.find_element(By.NAME, 'mobile').send_keys(PHONE_NUMBER)
+driver.find_element(By.NAME, 'mobile').send_keys(PHONE_NUMBER) #Add Phone Number
 time.sleep(get_SLEEP_TIME())
 driver.find_element(By.XPATH, '//*[@id="login_button_continue"]').click() #Sign up after number
 
@@ -49,7 +47,7 @@ driver.maximize_window()
 
 
 
-driver.find_element(By.NAME, 'otp').send_keys(OTP)
+driver.find_element(By.NAME, 'otp').send_keys(OTP) #Add OTP
 time.sleep(get_SLEEP_TIME()+3)
 
 driver.find_element(By.ID, 'login_button_verify_otp').click() #OTP Click button
@@ -63,7 +61,7 @@ watchlists = []
 stocks = []
 
 for i in range(1, NO_OF_WATCHLISTS+1):
-    list_temp = driver.find_element(By.XPATH, f'//*[@id="__next"]/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div[3]/div[2]/div/button[{i}]')
+    list_temp = driver.find_element(By.XPATH, f'//*[@id="__next"]/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div[3]/div[2]/div/button[{i}]') #Individual Watchlists 
     list_temp.click()
     watchlists.append(list_temp.text)
     stock_temp = []
@@ -71,21 +69,21 @@ for i in range(1, NO_OF_WATCHLISTS+1):
     for j in range(1, 100):
         try:
             # input("Press Enter")
-            temp_name = driver.find_element(By.XPATH, f'//*[@id="__next"]/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div[3]/div[3]/div[{j}]/div[1]/div/p[1]')
+            temp_name = driver.find_element(By.XPATH, f'//*[@id="__next"]/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div[3]/div[3]/div[{j}]/div[1]/div/p[1]') #Individual Stocks
 
             stock_temp.append(temp_name.text)
             print(stock_temp)
             time.sleep(get_SLEEP_TIME())
 
         except Exception as e:
-            print("Index out of bounds : ", e)
+            print("Index out of bounds : ", e)  #Allows to have any number of stocks in a watchlist upto 100
             break;
 
     else:
         print("Debugging Required (infinte Loop)")
 
     stocks.append(stock_temp)
-    print("\n\nSTOCKS\n",stocks)
+    print("\n\nSTOCKS\n",stocks) #test
 
 
 from Write_Excel import Excel
@@ -95,8 +93,3 @@ excel = Excel(stocks=stocks, watchlist=watchlists, filename=excel_filename, shee
 
 excel.write()
 
-
-
-
-
-input("Enter EXIt")
